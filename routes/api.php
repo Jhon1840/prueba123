@@ -3,18 +3,13 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\userController;
+use App\Http\Controllers\Api\loginController;
 
-Route::get('/usuarios', [userController::class, 'index']);
+    Route::post('/login', [UserController::class, 'login']);
 
+    Route::post('/usuarios', [UserController::class, 'store']);
+    Route::get('/usuarios', [UserController::class, 'index']);
+    Route::get('/usuarios/{id}', [UserController::class, 'show']);
+    Route::put('/usuarios/{id}', [UserController::class, 'update']); // asumiendo que tienes un método 'update'
+    Route::delete('/usuarios/{id}', [UserController::class, 'destroy']);
 
-Route::get('/usuarios/{id}', [userController::class, 'show']);
-
-
-Route::post('/usuarios',[userController::class,'store']);
-
-
-Route::put('/usuarios/{id}',function(){
-    return 'Actualizando usuario';
-});
-
-Route::delete('/usuarios/{id}',[userController::class ,'destroy']);

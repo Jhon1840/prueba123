@@ -8,8 +8,14 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Usuario;
 use GuzzleHttp\Psr7\Message;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+use function Laravel\Prompts\password;
+
 class UserController extends Controller
 {
+    use HasApiTokens;
     public function index()
     {   
         $usuarios = Usuario::all();
@@ -26,7 +32,7 @@ class UserController extends Controller
             'nombre' => 'required|max:255',
             'apellido' => 'required',
             'ci' => 'required',
-            'correo' => 'required|email|unique:usuario',
+            'email' => 'required|email|unique:usuario',
             'telefono' => 'required',
             'password' => 'required'
         ]);
@@ -44,7 +50,7 @@ class UserController extends Controller
             'nombre' => $request->nombre,
             'apellido' => $request->apellido,
             'ci' => $request->ci,
-            'correo' => $request->correo,
+            'email' => $request->email,
             'telefono' => $request->telefono,
             'password' => Hash::make($request->password) 
         ]);
@@ -96,4 +102,36 @@ class UserController extends Controller
         ];
         return response()->json($data,200);
     }
+
+    public function login(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'email' => 'required|email|exists:usuario,email',
+        'password' => 'required|min:6',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'message' => 'Error en la validación de datos',
+            'errors' => $validator->errors(),
+            'status' => 422
+        ], 422);
+    }
+
+    $user = Usuario::where('email', $request->email)->first();
+
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json([
+            'message' => 'Credenciales incorrectas'
+        ], 401);
+    }
+
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'message' => 'Usuario logeado',
+        'token' => $token,
+        'status' => 200
+    ], 200);
+}
 }
