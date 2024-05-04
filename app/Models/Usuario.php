@@ -17,7 +17,7 @@ class Usuario extends Model
         'nombre',
         'apellido',
         'ci',
-        'email',
+        'correo',
         'telefono' ,
         'password'
      

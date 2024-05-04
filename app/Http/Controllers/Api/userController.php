@@ -32,7 +32,7 @@ class UserController extends Controller
             'nombre' => 'required|max:255',
             'apellido' => 'required',
             'ci' => 'required',
-            'email' => 'required|email|unique:usuario',
+            'correo' => 'required|email|unique:usuario',
             'telefono' => 'required',
             'password' => 'required'
         ]);
@@ -50,7 +50,7 @@ class UserController extends Controller
             'nombre' => $request->nombre,
             'apellido' => $request->apellido,
             'ci' => $request->ci,
-            'email' => $request->email,
+            'correo' => $request->correo,
             'telefono' => $request->telefono,
             'password' => Hash::make($request->password) 
         ]);
@@ -106,7 +106,7 @@ class UserController extends Controller
     public function login(Request $request)
 {
     $validator = Validator::make($request->all(), [
-        'email' => 'required|email|exists:usuario,email',
+        'correo' => 'required|email|exists:usuario,correo',
         'password' => 'required|min:6',
     ]);
 
@@ -118,7 +118,7 @@ class UserController extends Controller
         ], 422);
     }
 
-    $user = Usuario::where('email', $request->email)->first();
+    $user = Usuario::where('correo', $request->correo)->first();
 
     if (!$user || !Hash::check($request->password, $user->password)) {
         return response()->json([
