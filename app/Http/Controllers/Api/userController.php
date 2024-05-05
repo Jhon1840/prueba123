@@ -65,9 +65,9 @@ class UserController extends Controller
 
         $data = [
             'usuario' => $usuario,
-            'status' => 201,
+            'status' => 200,
         ];
-        return response()->json($data, 201);
+        return response()->json($data, 200);
     }
 
     public function show($id){
@@ -106,15 +106,14 @@ class UserController extends Controller
     public function login(Request $request)
 {
     $validator = Validator::make($request->all(), [
-        'correo' => 'required|email|exists:usuario,correo',
+        'correo' => 'required|email',
         'password' => 'required|min:6',
     ]);
 
     if ($validator->fails()) {
         return response()->json([
             'message' => 'Error en la validación de datos',
-            'errors' => $validator->errors(),
-            'status' => 422
+            'errors' => $validator->errors()
         ], 422);
     }
 
@@ -130,8 +129,18 @@ class UserController extends Controller
 
     return response()->json([
         'message' => 'Usuario logeado',
-        'token' => $token,
-        'status' => 200
+        'token' => $token
     ], 200);
-}
+    }
+
+    public function logout(Request $request)
+    {
+    
+        $request->user()->tokens->each(function ($token, $key) {
+            $token->delete();
+        });
+
+        return response()->json(['message' => 'Has cerrado sesión correctamente y todos los tokens han sido revocados']);
+    }
+
 }
