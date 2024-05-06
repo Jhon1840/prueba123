@@ -138,7 +138,7 @@ class Procedimientos extends Controller
         }
     
         $validator = Validator::make($request->all(), [
-            'imagen_garaje' => 'nullable|url',
+            'imagen_garaje' => 'nullable',
             'ancho' => 'required|numeric',
             'largo' => 'required|numeric',
             'direccion' => 'required|string',
@@ -147,7 +147,7 @@ class Procedimientos extends Controller
             'latitud' => 'nullable|string',
             'longitud' => 'nullable|string',
             'secciones' => 'required|array',
-            'secciones.*.imagen_seccion' => 'nullable|url',
+            'secciones.*.imagen_seccion' => 'nullable',
             'secciones.*.ancho' => 'required|numeric',
             'secciones.*.largo' => 'required|numeric',
             'secciones.*.hora_inicio' => 'required|date_format:H:i',
