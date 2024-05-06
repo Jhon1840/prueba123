@@ -4,32 +4,37 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateOfertaTable extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * @return void
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('oferta', function (Blueprint $table) {
-            $table->increments('id_oferta');
+            $table->id('id_oferta');
             $table->time('hora_inicio')->nullable();
-            $table->binary('tipo_oferta')->nullable();
+            $table->text('tipo_oferta')->nullable();
             $table->time('hora_final')->nullable();
             $table->integer('precio_estimado')->nullable();
             $table->date('fecha')->nullable();
-            $table->string('estado')->nullable();
-            $table->integer('id_seccion')->nullable()->index('idx_oferta_seccion');
+            $table->string('estado')->nullable()->collation('utf8mb4_unicode_ci');
+            $table->unsignedBigInteger('id_seccion')->nullable();
+            $table->timestamps();
 
-            
+            $table->foreign('id_seccion')->references('id_seccion')->on('seccion')->onDelete('set null');
         });
     }
 
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('oferta');
     }
-};
+}

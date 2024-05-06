@@ -4,25 +4,29 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class AddTimestampsToMetricasTable extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * @return void
      */
-    public function up(): void
+    public function up()
     {
         Schema::table('metricas', function (Blueprint $table) {
-            $table->foreign(['id_usuario'], 'metricas_ibfk_1')->references(['id_usuario'])->on('usuario')->onUpdate('no action')->onDelete('no action');
+            $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
-    public function down(): void
+    public function down()
     {
         Schema::table('metricas', function (Blueprint $table) {
-            $table->dropForeign('metricas_ibfk_1');
+            $table->dropTimestamps();
         });
     }
-};
+}
