@@ -130,7 +130,6 @@ class Procedimientos extends Controller
     public function storeGaraje(Request $request)
     {
         $user = $request->user();
-    
         if (!$user) {
             return response()->json([
                 'message' => 'Usuario no autenticado',
@@ -138,7 +137,7 @@ class Procedimientos extends Controller
             ], 401);
         }
     
-        $validatedData = $request->validate([
+        $validator = Validator::make($request->all(), [
             'imagen_garaje' => 'nullable|url',
             'ancho' => 'required|numeric',
             'largo' => 'required|numeric',
@@ -157,25 +156,40 @@ class Procedimientos extends Controller
             'secciones.*.altura' => 'required|numeric'
         ]);
     
-        $garaje = new Garaje($validatedData);
-        $garaje->id_usuario = $user->id_usuario; 
-        $garaje->save();
-    
-        foreach ($validatedData['secciones'] as $secData) {
-            $secData['id_garaje'] = $garaje->id_garaje;
-            $seccion = new Seccion($secData);
-            $seccion->save();
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Error de validación',
+                'errors' => $validator->errors()
+            ], 422);
         }
-        
-        $garaje->load('secciones'); 
-
-        return response()->json([
-            'message' => 'Garaje y secciones creadas exitosamente',
-            'garaje' => $garaje,
-            'secciones' => $garaje->secciones
-        ], 201);
-    }
     
+        $validatedData = $validator->validated();
+    
+        try {
+            $garaje = new Garaje($validatedData);
+            $garaje->id_usuario = $user->id_usuario;
+            $garaje->save();
+    
+            foreach ($validatedData['secciones'] as $secData) {
+                $secData['id_garaje'] = $garaje->id_garaje;
+                $seccion = new Seccion($secData);
+                $seccion->save();
+            }
+    
+            $garaje->load('secciones');
+    
+            return response()->json([
+                'message' => 'Garaje y secciones creadas exitosamente',
+                'garaje' => $garaje,
+                'secciones' => $garaje->secciones
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al guardar el garaje y las secciones',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
     public function showGaraje(Request $request)
     {
 
