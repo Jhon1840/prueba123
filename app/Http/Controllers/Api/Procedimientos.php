@@ -150,8 +150,8 @@ class Procedimientos extends Controller
             'secciones.*.imagen_seccion' => 'nullable',
             'secciones.*.ancho' => 'required|numeric',
             'secciones.*.largo' => 'required|numeric',
-            'secciones.*.hora_inicio' => 'required|date_format:H:i',
-            'secciones.*.hora_final' => 'required|date_format:H:i',
+            'secciones.*.hora_inicio' => 'required',
+            'secciones.*.hora_final' => 'required',
             'secciones.*.estado' => 'required|string',
             'secciones.*.altura' => 'required|numeric'
         ]);
