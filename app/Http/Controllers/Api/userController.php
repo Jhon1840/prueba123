@@ -26,6 +26,39 @@ class UserController extends Controller
         return response()->json($data, 200);
     }
 
+
+    /**
+ * @OA\Post(
+ *     path="/api/usuarios",
+ *     tags={"Usuarios"},
+ *     summary="Crear un nuevo usuario",
+ *     description="Crea un nuevo usuario con los datos proporcionados.",
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"nombre", "apellido", "ci", "correo", "telefono", "password"},
+ *             @OA\Property(property="nombre", type="string"),
+ *             @OA\Property(property="apellido", type="string"),
+ *             @OA\Property(property="ci", type="string"),
+ *             @OA\Property(property="correo", type="string", format="email"),
+ *             @OA\Property(property="telefono", type="string"),
+ *             @OA\Property(property="password", type="string", format="password")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Usuario creado exitosamente",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="usuario", ref="#/components/schemas/Usuario"),
+ *             @OA\Property(property="status", type="integer", example=200)
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en la validación de datos"
+ *     )
+ * )
+ */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -70,6 +103,30 @@ class UserController extends Controller
         return response()->json($data, 200);
     }
 
+    /**
+ * @OA\Get(
+ *     path="/api/usuarios/{id}",
+ *     tags={"Usuarios"},
+ *     summary="Mostrar usuario",
+ *     description="Muestra los detalles de un usuario específico por ID.",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID del usuario",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Operación exitosa",
+ *         @OA\JsonContent(ref="#/components/schemas/Usuario")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Usuario no encontrado"
+ *     )
+ * )
+ */
     public function show($id){
         $usuarios = Usuario::find($id);
         if(!$usuarios){
@@ -85,6 +142,8 @@ class UserController extends Controller
         ];
         return response()->json($data,200);
     }
+
+
 
     public function destroy($id){
         $usuario = Usuario::find($id);
@@ -102,6 +161,22 @@ class UserController extends Controller
         ];
         return response()->json($data,200);
     }
+
+
+    /**
+ * @OA\Schema(
+ *     schema="Usuario",
+ *     type="object",
+ *     required={"nombre", "apellido", "ci", "correo", "telefono", "password"},
+ *     @OA\Property(property="nombre", type="string"),
+ *     @OA\Property(property="apellido", type="string"),
+ *     @OA\Property(property="ci", type="string"),
+ *     @OA\Property(property="correo", type="string", format="email"),
+ *     @OA\Property(property="telefono", type="string"),
+ *     @OA\Property(property="password", type="string", format="password")
+ * )
+ */
+
 
     public function login(Request $request)
 {
@@ -144,3 +219,23 @@ class UserController extends Controller
     }
 
 }
+
+
+
+/**
+ * @OA\OpenApi(
+ *   @OA\Info(
+ *     title="API de Usuarios",
+ *     version="1.0.0",
+ *     description="API para la gestión de usuarios en Laravel",
+ *     @OA\Contact(
+ *       email="soporte@tudominio.com",
+ *       name="Soporte Técnico"
+ *     )
+ *   ),
+ *   @OA\Server(
+ *     description="Servidor principal",
+ *     url="http://localhost:8000/api"
+ *   )
+ * )
+ */
